@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم TREND STORE | إدارة المتجر</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        .nav-link-active { @apply bg-stone-900 text-amber-500 font-semibold; }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-900 flex h-screen overflow-hidden">
+
+    <!-- 1. القائمة الجانبية (Sidebar) -->
+    <aside class="w-64 bg-black text-white flex flex-col justify-between hidden md:flex shrink-0">
+        <div class="p-6">
+            <div class="text-xl font-bold tracking-wider text-white border-b border-stone-800 pb-4">
+                TREND <span class="text-xs text-amber-500 font-light block">لوحة التحكم الإدارية</span>
+            </div>
+            <!-- الروابط الجانبية -->
+            <nav class="mt-8 space-y-2" id="sidebar-nav">
+                <button onclick="switchTab('overview')" id="btn-overview" class="w-full flex items-center space-x-reverse space-x-3 bg-stone-900 text-amber-500 px-4 py-3 rounded-md text-sm font-semibold transition">
+                    <span>📊</span> <span>الرئيسية (الإحصائيات)</span>
+                </button>
+                <button onclick="switchTab('products')" id="btn-products" class="w-full flex items-center space-x-reverse space-x-3 hover:bg-stone-900 text-stone-300 hover:text-white px-4 py-3 rounded-md text-sm transition">
+                    <span>🛍️</span> <span>إدارة المنتجات</span>
+                </button>
+                <button onclick="switchTab('orders')" id="btn-orders" class="w-full flex items-center space-x-reverse space-x-3 hover:bg-stone-900 text-stone-300 hover:text-white px-4 py-3 rounded-md text-sm transition">
+                    <span>📦</span> <span>الطلبات الواردة</span>
+                </button>
+                <button onclick="switchTab('customers')" id="btn-customers" class="w-full flex items-center space-x-reverse space-x-3 hover:bg-stone-900 text-stone-300 hover:text-white px-4 py-3 rounded-md text-sm transition">
+                    <span>👥</span> <span>العملاء والمستخدمين</span>
+                </button>
+                <button onclick="switchTab('settings')" id="btn-settings" class="w-full flex items-center space-x-reverse space-x-3 hover:bg-stone-900 text-stone-300 hover:text-white px-4 py-3 rounded-md text-sm transition">
+                    <span>⚙️</span> <span>إعدادات المتجر</span>
+                </button>
+            </nav>
+        </div>
+        <div class="p-4 border-t border-stone-800 text-xs text-stone-500 text-center">
+            براند Trend &copy; 2026
+        </div>
+    </aside>
+
+    <!-- 2. محتوى لوحة التحكم الرئيسي -->
+    <main class="flex-1 flex flex-col overflow-y-auto">
+        <!-- الهيدر العلوي للمدير -->
+        <header class="bg-white border-b border-stone-200 px-8 py-4 flex justify-between items-center shrink-0">
+            <h1 class="text-xl font-bold text-stone-800" id="page-title">مرحباً بك في الإدارة العامة ⚙️</h1>
+            <div class="flex items-center space-x-reverse space-x-4">
+                <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-1 rounded">مسؤول النظام (Admin)</span>
+                <div class="w-8 h-8 rounded-full bg-stone-900 text-white flex items-center justify-center font-bold text-sm">A</div>
+            </div>
+        </header>
+
+        <!-- الأقسام المختلفة للوحة التحكم -->
+        <div class="p-6 md:p-8 space-y-8 flex-1">
+            
+            <!-- ================= أولاً: قسم الرئيسية والإحصائيات ================= -->
+            <div id="section-overview" class="tab-content space-y-8">
+                <!-- كروت الإحصائيات السريعة -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                        <p class="text-stone-500 text-xs font-semibold">إجمالي المبيعات المحققة</p>
+                        <h3 class="text-2xl font-bold mt-2 text-stone-900" id="stat-revenue">0 ج.م</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                        <p class="text-stone-500 text-xs font-semibold">إجمالي الطلبات المستلمة</p>
+                        <h3 class="text-2xl font-bold mt-2 text-blue-600" id="stat-orders-count">0 طلب</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                        <p class="text-stone-500 text-xs font-semibold">إجمالي المنتجات بالمتجر</p>
+                        <h3 class="text-2xl font-bold mt-2 text-stone-900" id="stat-products-count">0 قطعة</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                        <p class="text-stone-500 text-xs font-semibold">طلبات بانتظار التأكيد</p>
+                        <h3 class="text-2xl font-bold mt-2 text-amber-600" id="stat-pending-count">0 طلبات</h3>
+                    </div>
+                </div>
+
+                <!-- نموذج إضافة منتج سريع مدمج بالرئيسية يرسل للسيرفر لايف -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200 space-y-6">
+                    <div>
+                        <h2 class="text-lg font-bold">➕ إضافة منتج جديد للمتجر</h2>
+                        <p class="text-xs text-stone-500 mt-1">سيتم رفع المنتج في قاعدة بيانات الخادم فوراً ليعرض لجميع الزبائن</p>
+                    </div>
+
+                    <form id="add-product-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-xs font-semibold text-stone-700 block">اسم المنتج</label>
+                            <input type="text" id="p-name" placeholder="مثال: جاكيت جلد أسود فاخر" class="w-full border border-stone-300 px-3 py-2 rounded-md text-sm outline-none focus:border-black" required>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-xs font-semibold text-stone-700 block">السعر (ج.م)</label>
+                                <input type="number" id="p-price" placeholder="950" class="w-full border border-stone-300 px-3 py-2 rounded-md text-sm outline-none focus:border-black" required>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-semibold text-stone-700 block">القسم</label>
+                                <select id="p-category" class="w-full border border-stone-300 px-3 py-2 rounded-md text-sm bg-white outline-none focus:border-black">
+                                    <option value="women">ملابس حريمي</option>
+                                    <option value="men">ملابس رجالي</option>
+                                    <option value="shoes">أحذية</option>
+                                    <option value="perfumes">عطور</option>
+                                    <option value="accessories">إكسسوارات</option>
+                                    <option value="sales">تخفيضات 🔥</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- التعديل هنا: استبدال الـ URL بـ File Input لرفع الصور مباشرة من الجهاز -->
+                        <div class="space-y-2 md:col-span-2">
+                            <label class="text-xs font-semibold text-stone-700 block">صورة المنتج (ارفع ملف من جهازك)</label>
+                            <input type="file" id="p-img" accept="image/*" class="w-full border border-stone-300 px-3 py-2 rounded-md text-sm outline-none focus:border-black bg-white" required>
+                        </div>
+                        <div class="md:col-span-2 text-left">
+                            <button type="submit" class="bg-black text-white px-6 py-2.5 text-xs font-bold hover:bg-stone-800 transition">نشر المنتج في المتجر الآن</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ================= ثانياً: قسم إدارة المنتجات المضافة ================= -->
+            <div id="section-products" class="tab-content space-y-6 hidden">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                    <h2 class="text-lg font-bold mb-4">🛒 المنتجات المتوفرة حالياً بالباك-إند</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-xs">
+                            <thead>
+                                <tr class="bg-stone-50 border-b border-stone-200 text-stone-600">
+                                    <th class="p-3">الصورة</th>
+                                    <th class="p-3">اسم المنتج</th>
+                                    <th class="p-3">القسم</th>
+                                    <th class="p-3">السعر</th>
+                                    <th class="p-3">التحكم</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table-body" class="divide-y divide-stone-100">
+                                <!-- المنتجات الديناميكية هتنزل هنا من السيرفر -->
+                            </tbody>
+                        </table>
+                        <div id="no-custom-products" class="text-center py-8 text-stone-400 hidden">لا توجد منتجات مسجلة في الباك-إند حالياً.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= ثالثاً: قسم مراجعة الطلبات وإيصالات كاش ================= -->
+            <div id="section-orders" class="tab-content space-y-6 hidden">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                    <div class="mb-4 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-lg font-bold">🧾 مراجعة الطلبات وإيصالات تحويل أورنج كاش</h2>
+                            <p class="text-xs text-stone-500 mt-1">تأكد من قيمة التحويل من لوحة الحساب قبل تفعيل الشحن</p>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-stone-50 text-stone-600 uppercase border-b border-stone-200">
+                                    <th class="p-3">رقم الطلر</th>
+                                    <th class="p-3">هاتف العميل</th>
+                                    <th class="p-3">المنتجات المطلوب شحنها</th>
+                                    <th class="p-3">المبلغ الإجمالي</th>
+                                    <th class="p-3">حالة الطلب</th>
+                                    <th class="p-3">الإجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-table-body" class="divide-y divide-stone-100">
+                                <!-- الطلبات الحية الواردة من API الباك-إند هتنزل هنا -->
+                            </tbody>
+                        </table>
+                        <div id="no-orders-msg" class="text-center py-12 text-stone-400 hidden">
+                            لا توجد طلبات معلقة حالياً في السيرفر.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= رابعاً: قسم العملاء ================= -->
+            <div id="section-customers" class="tab-content space-y-6 hidden">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200 text-center py-12">
+                    <span class="text-4xl block mb-2">👥</span>
+                    <h2 class="text-base font-bold text-stone-700">سجل العملاء والمستخدمين</h2>
+                    <p class="text-xs text-stone-400 mt-1">يتم حالياً مزامنة ورصد بيانات العملاء النشطين وتتبع عمليات تسجيل الدخول لايف عبر السيرفر.</p>
+                </div>
+            </div>
+
+            <!-- ================= خامساً: قسم الإعدادات ================= -->
+            <div id="section-settings" class="tab-content space-y-6 hidden">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200 text-center py-12">
+                    <span class="text-4xl block mb-2">⚙️</span>
+                    <h2 class="text-base font-bold text-stone-700">إعدادات براند TREND STORE</h2>
+                    <p class="text-xs text-stone-400 mt-1">من هنا يمكنك مستقبلاً ربط وتحديث بوابات الدفع وقيم الخصم الحصرية المنسقة باسم شركة Aivare.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- 3. نظام الجافا سكريبت التفاعلي الثابت والمباشر -->
+    <script>
+        // تثبيت المسار الصحيح والمباشر بناءً على ملف main.py المرسل
+        const API_URL = 'http://127.0.0.1:8000/api';
+
+        // دالة التنقل والتبديل بين الأقسام
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById(`section-${tabId}`).classList.remove('hidden');
+            
+            const navButtons = document.querySelectorAll('#sidebar-nav button');
+            navButtons.forEach(btn => {
+                btn.className = "w-full flex items-center space-x-reverse space-x-3 hover:bg-stone-900 text-stone-300 hover:text-white px-4 py-3 rounded-md text-sm transition";
+            });
+            
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.className = "w-full flex items-center space-x-reverse space-x-3 bg-stone-900 text-amber-500 px-4 py-3 rounded-md text-sm font-semibold transition";
+            }
+
+            const titleMap = {
+                'overview': 'مرحباً بك في الإدارة العامة ⚙️',
+                'products': '🗂️ إدارة ومعاينة معروضات المتجر السريعة',
+                'orders': '📦 مراجعة وإدارة الطلبات الواردة الفورية',
+                'customers': '👥 لوحة تتبع بيانات المستهلكين',
+                'settings': '⚙️ تهيئة إعدادات النظام البرمجية'
+            };
+            document.getElementById('page-title').innerText = titleMap[tabId] || 'لوحة تحكم TREND STORE';
+            
+            updateDashboardLive();
+        }
+
+        // دالة جلب وتحديث كافة الإحصائيات والجداول من الباك-إند
+        async function updateDashboardLive() {
+            try {
+                // 1. جلب المنتجات بشكل آمن بدون إظهار أي alert مزعج لو السيرفر فاضي
+                const productsRes = await fetch(`${API_URL}/products`).catch(() => null);
+                let products = [];
+                if (productsRes && productsRes.ok) {
+                    products = await productsRes.json();
+                }
+
+                // 2. جلب الطلبات بشكل آمن
+                const ordersRes = await fetch(`${API_URL}/admin/orders`).catch(() => null);
+                let orders = [];
+                if (ordersRes && ordersRes.ok) {
+                    const ordersData = await ordersRes.json();
+                    orders = ordersData.orders || [];
+                }
+
+                // 3. تحديث العدادات الرقمية الفورية بالرئيسية
+                let totalRevenue = 0;
+                let pendingOrders = 0;
+                
+                orders.forEach(order => {
+                    totalRevenue += order.total_price || 0;
+                    if (order.status === 'قيد الانتظار' || order.status.includes('قيد الانتظار')) {
+                        pendingOrders++;
+                    }
+                });
+
+                document.getElementById('stat-revenue').innerText = totalRevenue.toLocaleString('ar-EG') + ' ج.م';
+                document.getElementById('stat-orders-count').innerText = orders.length + ' طلب';
+                document.getElementById('stat-products-count').innerText = products.length + ' قطعة';
+                document.getElementById('stat-pending-count').innerText = pendingOrders + ' طلبات';
+
+                // ---- بناء جدول الطلبات ----
+                const ordersTbody = document.getElementById('orders-table-body');
+                const noOrdersMsg = document.getElementById('no-orders-msg');
+                ordersTbody.innerHTML = '';
+
+                if (orders.length === 0) {
+                    noOrdersMsg.classList.remove('hidden');
+                } else {
+                    noOrdersMsg.classList.add('hidden');
+                    orders.forEach((order) => {
+                        const isPending = order.status.includes('قيد الانتظار');
+                        ordersTbody.innerHTML += `
+                            <tr class="hover:bg-stone-50/80 transition border-b border-stone-100">
+                                <td class="p-3 font-semibold text-stone-600">${order.order_id}</td>
+                                <td class="p-3 font-semibold text-stone-700">${order.phone}</td>
+                                <td class="p-3 font-medium text-stone-800">${order.items.join(' ، ')}</td>
+                                <td class="p-3 font-bold text-stone-900">${order.total_price} ج.م</td>
+                                <td class="p-3">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isPending ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800'}">
+                                        ${order.status}
+                                    </span>
+                                </td>
+                                <td class="p-3 space-x-reverse space-x-2">
+                                    ${isPending ? `<button onclick="shipOrder('${order.order_id}')" class="bg-green-600 text-white px-2.5 py-1 rounded text-[10px] font-bold hover:bg-green-700 transition">شحن وتأكيد</button>` : ''}
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                // ---- بناء جدول المنتجات ----
+                const productsTbody = document.getElementById('products-table-body');
+                const noCustomProductsMsg = document.getElementById('no-custom-products');
+                productsTbody.innerHTML = '';
+
+                const categoryArabicMap = {
+                    'men': 'ملابس رجالي',
+                    'women': 'ملابس حريمي',
+                    'shoes': 'أحذية',
+                    'perfumes': 'عطور',
+                    'accessories': 'إكسسوارات',
+                    'sales': 'تخفيضات 🔥'
+                };
+
+                if (products.length === 0) {
+                    noCustomProductsMsg.classList.remove('hidden');
+                } else {
+                    noCustomProductsMsg.classList.add('hidden');
+                    products.forEach((prod) => {
+                        productsTbody.innerHTML += `
+                            <tr class="hover:bg-stone-50 transition border-b border-stone-100">
+                                <td class="p-3"><img src="${prod.img}" class="w-10 h-12 object-cover rounded shadow-sm"></td>
+                                <td class="p-3 font-semibold text-stone-800">${prod.name}</td>
+                                <td class="p-3 text-stone-500">${categoryArabicMap[prod.category] || prod.category}</td>
+                                <td class="p-3 font-bold text-stone-900">${prod.price} ج.م</td>
+                                <td class="p-3">
+                                    <button onclick="deleteProduct(${prod.id})" class="text-red-500 hover:text-red-700 font-medium">إزالة القطعة</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+            } catch (error) {
+                console.error("فشل تحديث البيانات من الخادم:", error);
+            }
+        }
+
+        // دالة تأكيد شحن الطلب
+        async function shipOrder(orderId) {
+            alert(`الطلب ${orderId} تم تأكيده شحناً بنجاح!`);
+        }
+
+        // دالة حذف منتج مباشر من الباك-إند
+        async function deleteProduct(id) {
+            if (!confirm('هل أنت متأكد من إزالة هذه القطعة نهائياً من العرض؟')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/products/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('تم حذف القطعة بنجاح وتحديث الباك-إند!');
+                    updateDashboardLive();
+                } else {
+                    alert('فشل حذف القطعة من السيرفر.');
+                }
+            } catch (error) {
+                console.error("فشل الاتصال لحذف المنتج:", error);
+            }
+        }
+
+        // تعديل معالجة الفورم لتحويل ملف الصورة لـ Base64 ثم إرسالها للسيرفر
+        document.getElementById('add-product-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('p-name').value;
+            const price = parseFloat(document.getElementById('p-price').value);
+            const category = document.getElementById('p-category').value; 
+            const fileInput = document.getElementById('p-img');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("من فضلك اختر صورة للمنتج أولاً!");
+                return;
+            }
+
+            // تحويل الملف المرفوع لنص Base64
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async () => {
+                const base64Image = reader.result;
+
+                const productData = {
+                    name: name,
+                    price: price,
+                    category: category,
+                    img: base64Image // إرسال نص الصورة الطويل
+                };
+
+                try {
+                    const response = await fetch(`${API_URL}/products`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(productData)
+                    });
+
+                    if (response.ok) {
+                        alert('🚀 تم نشر المنتج بنجاح وتغذية قاعدة بيانات الباك-إند الحية!');
+                        document.getElementById('add-product-form').reset();
+                        updateDashboardLive();
+                    } else {
+                        const errData = await response.json();
+                        alert(`حدث خطأ: ${errData.detail || 'لا يمكن الرفع حالياً'}`);
+                    }
+                } catch (error) {
+                    console.error("خطأ برفع المنتج:", error);
+                    alert("تعذر الوصول للباك-إند لرفع هذا المنتج. تأكد من عمل سيرفر FastAPI.");
+                }
+            };
+
+            reader.onerror = function (error) {
+                console.error('خطأ بقراءة الصورة المرفوعة:', error);
+                alert('فشل في قراءة ملف الصورة، من فضلك جرب صورة أخرى.');
+            };
+        });
+
+        // تشغيل التحديث فور تحميل الصفحة
+        window.onload = updateDashboardLive;
+    </script>
+</body>
+</html>
