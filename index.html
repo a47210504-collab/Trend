@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trend Store | البراند المفضّل للموضة</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        .gold-gradient { background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%); }
+        .text-gold { color: #D4AF37; }
+        .border-gold { border-color: #D4AF37; }
+        .hidden-force { display: none !important; }
+        #cart-sidebar, #auth-modal { position: fixed; inset: 0; z-index: 9999; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 overflow-x-hidden">
+
+    <div class="bg-black text-white text-center py-2 text-xs md:text-sm font-light tracking-wide">
+        شحن مجاني للطلبات فوق 2000 جنيه | خصم 10% على أول طلب بكود: <span class="text-gold font-bold">TREND10</span>
+    </div>
+
+    <header class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <nav class="hidden md:flex space-x-6 space-x-reverse text-sm font-semibold">
+                <button onclick="navigateTo('home')" class="hover:text-gold transition focus:outline-none">الرئيسية</button>
+                <button onclick="navigateTo('men')" class="hover:text-gold transition focus:outline-none">رجالي</button>
+                <button onclick="navigateTo('women')" class="hover:text-gold transition focus:outline-none">حريمي</button>
+                <button onclick="navigateTo('shoes')" class="hover:text-gold transition focus:outline-none">أحذية</button>
+                <button onclick="navigateTo('perfumes')" class="hover:text-gold transition focus:outline-none">عطور</button>
+                <button onclick="navigateTo('accessories')" class="hover:text-gold transition focus:outline-none">إكسسوارات</button>
+                <button onclick="navigateTo('sales')" class="text-red-600 hover:text-red-500 transition focus:outline-none">تخفيضات 🔥</button>
+            </nav>
+
+            <div class="flex items-center cursor-pointer" onclick="navigateTo('home')">
+                <img src="https://i.postimg.cc/5y3w3rtL/IMG-20251030-WA0037.jpg" alt="Trend Store Logo" class="h-12 w-12 object-contain rounded-full border border-gray-100 shadow-sm">
+            </div>
+
+            <div class="flex items-center space-x-4 space-x-reverse">
+                <button onclick="toggleAuthModal()" class="hover:text-gold transition p-1 flex items-center space-x-1 space-x-reverse focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 0114 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    <span class="text-xs hidden md:inline" id="user-display-name">دخول / تسجيل</span>
+                </button>
+                <button onclick="toggleCart()" class="hover:text-gold transition p-1 relative focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    <span id="cart-count" class="absolute -top-1 -left-2 bg-black text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div id="home-view">
+        <section class="relative h-[50vh] md:h-[70vh] bg-black text-white flex items-center justify-center overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80" alt="Trend Premium" class="absolute inset-0 w-full h-full object-cover opacity-40">
+            <div class="relative text-center px-4 max-w-2xl z-10 space-y-4">
+                <span class="text-gold tracking-widest text-xs uppercase font-semibold block">مجموعة صيف 2026</span>
+                <h1 class="text-3xl md:text-5xl leading-tight font-bold">البساطة هي عنوان الفخامة</h1>
+                <p class="text-gray-300 text-xs md:text-sm font-light max-w-md mx-auto">تسوّق الآن أرقى الأزياء والبراندات الحصرية بنقرة زر واحدة.</p>
+                <div class="pt-2">
+                    <button onclick="navigateTo('men')" class="bg-white text-black text-xs font-bold px-6 py-3 rounded shadow hover:bg-black hover:text-white transition">تصفح رجالي</button>
+                    <button onclick="navigateTo('women')" class="bg-transparent border border-white text-white text-xs font-bold px-6 py-3 rounded hover:bg-white hover:text-black transition mr-2">تصفح حريمي</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="container mx-auto px-4 py-12">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold">تسوق حسب القسم</h2>
+                <p class="text-gray-500 text-xs mt-1">اختر فئتك المفضلة واستمتع بتجربة تسوق فريدة</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div onclick="navigateTo('men')" class="relative h-48 rounded-lg overflow-hidden group cursor-pointer shadow">
+                    <img src="https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?auto=format&fit=crop&w=400&q=80" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">ملابس رجالي</span>
+                    </div>
+                </div>
+                <div onclick="navigateTo('women')" class="relative h-48 rounded-lg overflow-hidden group cursor-pointer shadow">
+                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=400&q=80" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">ملابس حريمي</span>
+                    </div>
+                </div>
+                <div onclick="navigateTo('shoes')" class="relative h-48 rounded-lg overflow-hidden group cursor-pointer shadow">
+                    <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=400&q=80" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">أحذية عصرية</span>
+                    </div>
+                </div>
+                <div onclick="navigateTo('perfumes')" class="relative h-48 rounded-lg overflow-hidden group cursor-pointer shadow">
+                    <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=400&q=80" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">عطور فخمة</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="category-view" class="hidden-force container mx-auto px-4 py-12 min-h-screen">
+        <button onclick="navigateTo('home')" class="text-xs font-bold text-gray-500 hover:text-black mb-6 flex items-center">
+            ← العودة للصفحة الرئيسية
+        </button>
+        <div class="border-b pb-6 border-gray-200 mb-8">
+            <h2 id="category-title" class="text-3xl font-bold text-gray-900">اسم القسم</h2>
+            <p id="category-desc" class="text-gray-500 text-sm mt-2"></p>
+        </div>
+        <div id="category-products-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
+    </div>
+
+    <div id="cart-sidebar" class="hidden-force">
+        <div class="absolute inset-0 bg-black bg-opacity-50" onclick="toggleCart()"></div>
+        <div class="absolute inset-y-0 left-0 max-w-full flex">
+            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col justify-between h-full">
+                <div class="flex-1 py-6 overflow-y-auto px-4 sm:px-6">
+                    <div class="flex items-start justify-between border-b pb-4">
+                        <h2 class="text-lg font-bold text-gray-900">سلة المشتريات</h2>
+                        <button onclick="toggleCart()" class="text-gray-400 hover:text-gray-500 focus:outline-none">❌</button>
+                    </div>
+                    <div class="mt-8" id="cart-items-wrapper">
+                        <p class="text-gray-500 text-center text-sm py-8" id="empty-cart-msg">السلة فارغة حالياً.</p>
+                        <ul role="list" class="-my-6 divide-y divide-gray-200" id="cart-items-list"></ul>
+                    </div>
+                </div>
+                <div class="border-t border-gray-200 py-6 px-4 sm:px-6 bg-gray-50 space-y-4">
+                    <div class="flex justify-between text-base font-medium text-gray-900">
+                        <p>الإجمالي المبدئي</p>
+                        <p id="cart-total-price">0 ج.م</p>
+                    </div>
+                    <div class="border-t pt-4 space-y-2">
+                        <p class="text-xs font-bold text-gray-700">وسيلة الدفع المتوفرة:</p>
+                        <div class="border p-3 rounded-lg bg-yellow-50 border-yellow-200 flex items-center justify-between">
+                            <span class="text-xs font-semibold text-gray-800">أورنج كاش (Orange Cash)</span>
+                            <span class="text-xs font-bold text-yellow-700 font-mono">01274734227</span>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <button onclick="checkoutOrder()" class="w-full flex justify-center items-center px-6 py-3 text-sm font-bold text-white bg-black hover:bg-gray-800 transition-all focus:outline-none">تأكيد حجز الطلب وإرساله للإدارة</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="auth-modal" class="hidden-force flex items-center justify-center">
+        <div class="absolute inset-0 bg-black bg-opacity-60" onclick="toggleAuthModal()"></div>
+        <div id="auth-box" class="bg-white p-6 md:p-8 rounded-lg max-w-sm w-full relative z-10 shadow-2xl text-right space-y-4 mx-4">
+            <h3 class="text-lg font-bold text-black text-center border-b pb-2">تسجيل مستخدم جديد</h3>
+            <form id="register-form" onsubmit="handleRegistration(event)" class="space-y-3">
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-700 block">الاسم بالكامل</label>
+                    <input type="text" id="reg-name" required placeholder="أحمد محمد" class="w-full border border-gray-300 px-3 py-1.5 rounded text-xs outline-none focus:border-black">
+                </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-700 block">رقم الهاتف</label>
+                    <input type="tel" id="reg-phone" required placeholder="012XXXXXXXX" class="w-full border border-gray-300 px-3 py-1.5 rounded text-xs outline-none focus:border-black">
+                </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-gray-700 block">كلمة المرور</label>
+                    <input type="password" id="reg-password" required placeholder="••••••••" class="w-full border border-gray-300 px-3 py-1.5 rounded text-xs outline-none focus:border-black">
+                </div>
+                <button type="submit" class="w-full bg-black text-white text-xs py-2.5 font-bold hover:bg-gray-800 transition focus:outline-none">تأكيد البيانات وإرسال رمز OTP</button>
+            </form>
+            <div id="otp-area" class="hidden-force space-y-3 border-t pt-3">
+                <p class="text-[11px] text-green-700 font-semibold text-center" id="otp-status-msg">جاري إرسال رمز التحقق...</p>
+                <input type="text" id="otp-code" placeholder="رمز OTP" class="w-full border border-gray-300 px-3 py-2 rounded text-center text-sm font-bold outline-none focus:border-black">
+                <button onclick="verifyOtp()" class="w-full bg-green-600 hover:bg-green-700 text-white text-xs py-2 font-bold transition focus:outline-none">التحقق وإتمام التسجيل</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-black text-white mt-20 border-t border-gray-800">
+        <div class="container mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-right">
+            <div class="space-y-3">
+                <h4 class="text-sm font-bold tracking-widest text-gold">TREND STORE</h4>
+                <p class="text-xs text-gray-400 font-light leading-relaxed">منصة عصرية تدمج بين فخامة براندات الموضة وبساطة تجربة التسوق الرقمي السريع.</p>
+            </div>
+            <div class="space-y-2">
+                <h4 class="text-sm font-bold text-white">روابط هامة</h4>
+                <ul class="text-xs text-gray-400 space-y-2 font-light list-none p-0">
+                    <li><a href="#" class="hover:text-white">سياسة الاسترجاع والاستبدال</a></li>
+                </ul>
+            </div>
+            <div class="space-y-3">
+                <h4 class="text-sm font-bold text-white">وسائل الدفع المعتمدة</h4>
+                <div class="flex justify-center md:justify-start space-x-3 space-x-reverse opacity-70">
+                    <span class="bg-white text-red-600 px-2 py-1 text-[10px] font-bold">Orange Cash</span>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-900 py-4 text-center text-xs text-stone-500">
+            &copy; 2026 براند Trend. جميع الحقوق محفوظة لشركة <span class="text-gold font-bold">Aivare</span>.
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:8000/api';
+        let cart = [];
+        let tempUserData = {};
+        let activeCategory = 'men';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedUser = JSON.parse(localStorage.getItem('currentUser'));
+            if(savedUser) {
+                document.getElementById('user-display-name').innerText = savedUser.name;
+            }
+        });
+
+        function navigateTo(viewId) {
+            const homeView = document.getElementById('home-view');
+            const categoryView = document.getElementById('category-view');
+            if (viewId === 'home') {
+                homeView.classList.remove('hidden-force');
+                categoryView.classList.add('hidden-force');
+            } else {
+                homeView.classList.add('hidden-force');
+                categoryView.classList.remove('hidden-force');
+                activeCategory = viewId;
+                buildCategoryPage(viewId);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function buildCategoryPage(category) {
+            const titles = {
+                'men': { name: 'الأناقة الرجالية 👔', desc: 'قمصان وبناطيل متميزة.' },
+                'women': { name: 'الجاذبية النسائية 👗', desc: 'أرقى الفساتين والبليزرات.' },
+                'shoes': { name: 'الأحذية العصرية 👟', desc: 'سنيكرز وأحذية رسمية.' },
+                'perfumes': { name: 'العطور الفاخرة ✨', desc: 'أرقى نفحات العطور الشرقية والغربية.' },
+                'accessories': { name: 'الإكسسوارات الفاخرة 🕶️', desc: 'اللمسات المكملة لأناقتك.' },
+                'sales': { name: 'تخفيضات حصرية 🔥', desc: 'أقوى العروض بأسعار خيالية.' }
+            };
+
+            document.getElementById('category-title').innerText = titles[category]?.name || 'قسم مخصص';
+            document.getElementById('category-desc').innerText = titles[category]?.desc || '';
+
+            const grid = document.getElementById('category-products-grid');
+            grid.innerHTML = '<div class="col-span-4 text-center py-12 text-gray-400 text-xs">جاري جلب المنتجات...</div>';
+
+            try {
+                // تعديل رابط الـ Fetch ليكون متوافقاً تماماً مع السيرفر الحقيقي ومسارات الـ API اللي في الـ main.py
+                const response = await fetch(`${API_URL}/products`);
+                if (!response.ok) throw new Error("استجابة غير سليمة من السيرفر");
+                const products = await response.json();
+                grid.innerHTML = '';
+
+                const filtered = products.filter(p => p.category === category);
+                if (filtered.length === 0) {
+                    grid.innerHTML = '<div class="col-span-4 text-center py-12 text-gray-400 text-xs">لا توجد قطع معروضة في هذا القسم حالياً.</div>';
+                    return;
+                }
+
+                filtered.forEach(p => {
+                    grid.innerHTML += `
+                        <div class="bg-white border border-gray-100 rounded-lg p-3 shadow-sm flex flex-col justify-between">
+                            <img src="${p.img}" class="w-full h-48 object-cover rounded mb-3">
+                            <h3 class="text-xs text-gray-800 font-semibold text-right">${p.name}</h3>
+                            <div class="flex justify-between items-center mt-3">
+                                <span class="text-xs font-bold text-gray-900">${p.price} ج.م</span>
+                                <button onclick="addToCart('${p.name}', ${p.price})" class="bg-black text-white text-[10px] px-3 py-1.5 rounded hover:bg-gray-800 focus:outline-none">+ إضافة للسلة</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error("خطأ في جلب البيانات:", error);
+                grid.innerHTML = '<div class="col-span-4 text-center py-12 text-red-500 text-xs">فشل الاتصال بالخادم. يرجى التأكد من تشغيل الباك-إند وحفظ التعديلات في ملف main.py.</div>';
+            }
+        }
+
+        function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('hidden-force'); }
+        function toggleAuthModal() { document.getElementById('auth-modal').classList.toggle('hidden-force'); }
+
+        function addToCart(name, price) {
+            cart.push({ name, price });
+            updateCartUI();
+            document.getElementById('cart-sidebar').classList.remove('hidden-force');
+        }
+
+        function updateCartUI() {
+            const countElem = document.getElementById('cart-count');
+            const listElem = document.getElementById('cart-items-list');
+            const totalElem = document.getElementById('cart-total-price');
+            const emptyMsg = document.getElementById('empty-cart-msg');
+
+            countElem.innerText = cart.length;
+            if (cart.length === 0) {
+                emptyMsg.classList.remove('hidden-force');
+                listElem.innerHTML = '';
+                totalElem.innerText = '0 ج.م';
+                return;
+            }
+
+            emptyMsg.classList.add('hidden-force');
+            listElem.innerHTML = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                total += item.price;
+                listElem.innerHTML += `
+                    <li class="flex py-4 text-right">
+                        <div class="flex-1 flex flex-col justify-between pr-4">
+                            <div class="flex justify-between text-sm font-medium text-gray-900">
+                                <h3>${item.name}</h3>
+                                <p class="ml-4 font-bold">${item.price} ج.م</p>
+                            </div>
+                            <div class="flex items-end justify-between text-xs mt-2">
+                                <p class="text-gray-500">الكمية: 1</p>
+                                <button onclick="removeFromCart(${index})" class="font-medium text-red-600 focus:outline-none">حذف</button>
+                            </div>
+                        </div>
+                    </li>
+                `;
+            });
+            totalElem.innerText = total + ' ج.م';
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        async function checkoutOrder() {
+            if (cart.length === 0) { alert('السلة فارغة!'); return; }
+            const totalPrice = cart.reduce((acc, curr) => acc + curr.price, 0);
+            const savedUser = JSON.parse(localStorage.getItem('currentUser'));
+            const userPhone = savedUser ? savedUser.phone : "غير مسجل";
+
+            const orderData = {
+                items: cart.map(item => item.name),
+                total_price: totalPrice,
+                phone: userPhone
+            };
+
+            try {
+                // توجيه الطلبات ليكون متوافقاً مع المسار الفعلي في الـ FastAPI
+                const response = await fetch(`${API_URL}/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+                const resData = await response.json();
+
+                if (response.ok) {
+                    alert(`🎉 تم حجز طلبك بنجاح برقم ${resData.order.order_id}\nيرجى تحويل ${totalPrice} ج.م إلى أورنج كاش: 01274734227`);
+                    cart = [];
+                    updateCartUI();
+                    toggleCart();
+                } else {
+                    alert(resData.detail || 'حدث خطأ أثناء معالجة الطلب');
+                }
+            } catch (error) {
+                alert("تعذر الاتصال بالخادم.");
+            }
+        }
+
+        async function handleRegistration(event) {
+            event.preventDefault();
+            tempUserData = {
+                name: document.getElementById('reg-name').value,
+                phone: document.getElementById('reg-phone').value,
+                password: document.getElementById('reg-password').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(tempUserData)
+                });
+                const resData = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('otp-area').classList.remove('hidden-force');
+                    document.getElementById('otp-status-msg').innerText = "تم إرسال كود التحقق!";
+                    alert(`[OTP للتجربة]: ${resData.dev_mode_otp}`);
+                } else {
+                    alert(resData.detail || "خطأ أثناء التسجيل");
+                }
+            } catch (error) {
+                alert("فشل الاتصال بالخادم.");
+            }
+        }
+
+        async function verifyOtp() {
+            const code = document.getElementById('otp-code').value;
+            try {
+                const response = await fetch(`${API_URL}/verify-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: tempUserData.phone, otp_code: code })
+                });
+
+                if (response.ok) {
+                    alert(`أهلاً بك! تم التسجيل بنجاح.`);
+                    localStorage.setItem('currentUser', JSON.stringify(tempUserData));
+                    document.getElementById('user-display-name').innerText = tempUserData.name;
+                    toggleAuthModal();
+                } else {
+                    alert('الكود خاطئ.');
+                }
+            } catch (error) {
+                alert("فشل التحقق.");
+            }
+        }
+    </script>
+</body>
+</html>
