@@ -357,7 +357,48 @@
             }
         }
 
-        // تعديل معالجة الفورم لتحويل ملف الصورة لـ Base64 ثم إرسالها للسيرفر
+        // دالة لضغط الصورة وحصر أبعادها وحجمها قبل الرفع
+        function compressImage(file, maxWidth, maxHeight, quality) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        // الحفاظ على نسبة الطول للعرض ومقاطعة الحجم الزائد
+                        if (width > height) {
+                            if (width > maxWidth) {
+                                height = Math.round((height * maxWidth) / width);
+                                width = maxWidth;
+                            }
+                        } else {
+                            if (height > maxHeight) {
+                                width = Math.round((width * maxHeight) / height);
+                                height = maxHeight;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // ضغط الصورة وتصديرها كـ Base64
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+                        resolve(compressedBase64);
+                    };
+                    img.onerror = (err) => reject(err);
+                };
+                reader.onerror = (err) => reject(err);
+            });
+        }
+
+        // معالجة الفورم مع الضغط التلقائي للصورة قبل الرفع
         document.getElementById('add-product-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -372,44 +413,35 @@
                 return;
             }
 
-            // تحويل الملف المرفوع لنص Base64
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = async () => {
-                const base64Image = reader.result;
+            try {
+                // ضغط الصورة لـ أقصى عرض 600 بكسل وبجودة 70% لتقليص المساحة لأقل من 80 كيلوبايت!
+                const base64Image = await compressImage(file, 600, 800, 0.7);
 
                 const productData = {
                     name: name,
                     price: price,
                     category: category,
-                    img: base64Image // إرسال نص الصورة الطويل
+                    img: base64Image
                 };
 
-                try {
-                    const response = await fetch(`${API_URL}/products`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(productData)
-                    });
+                const response = await fetch(`${API_URL}/products`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(productData)
+                });
 
-                    if (response.ok) {
-                        alert('🚀 تم نشر المنتج بنجاح وتغذية قاعدة بيانات الباك-إند الحية!');
-                        document.getElementById('add-product-form').reset();
-                        updateDashboardLive();
-                    } else {
-                        const errData = await response.json();
-                        alert(`حدث خطأ: ${errData.detail || 'لا يمكن الرفع حالياً'}`);
-                    }
-                } catch (error) {
-                    console.error("خطأ برفع المنتج:", error);
-                    alert("تعذر الوصول للباك-إند لرفع هذا المنتج. تأكد من عمل سيرفر FastAPI.");
+                if (response.ok) {
+                    alert('🚀 تم نشر المنتج بنجاح وتغذية قاعدة بيانات الباك-إند الحية!');
+                    document.getElementById('add-product-form').reset();
+                    updateDashboardLive();
+                } else {
+                    const errData = await response.json();
+                    alert(`حدث خطأ: ${errData.detail || 'لا يمكن الرفع حالياً'}`);
                 }
-            };
-
-            reader.onerror = function (error) {
-                console.error('خطأ بقراءة الصورة المرفوعة:', error);
-                alert('فشل في قراءة ملف الصورة، من فضلك جرب صورة أخرى.');
-            };
+            } catch (error) {
+                console.error("خطأ برفع المنتج أو ضغط الصورة:", error);
+                alert("تعذر الوصول للباك-إند لرفع هذا المنتج. تأكد من عمل سيرفر FastAPI.");
+            }
         });
 
         // تشغيل التحديث فور تحميل الصفحة
