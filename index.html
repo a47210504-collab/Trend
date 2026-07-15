@@ -172,42 +172,10 @@
         </div>
     </div>
 
-    <footer class="bg-black text-white mt-20 border-t border-gray-800">
-        <div class="container mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-right">
-            <div class="space-y-3">
-                <h4 class="text-sm font-bold tracking-widest text-gold">TREND STORE</h4>
-                <p class="text-xs text-gray-400 font-light leading-relaxed">منصة عصرية تدمج بين فخامة براندات الموضة وبساطة تجربة التسوق الرقمي السريع.</p>
-            </div>
-            <div class="space-y-2">
-                <h4 class="text-sm font-bold text-white">روابط هامة</h4>
-                <ul class="text-xs text-gray-400 space-y-2 font-light list-none p-0">
-                    <li><a href="#" class="hover:text-white">سياسة الاسترجاع والاستبدال</a></li>
-                </ul>
-            </div>
-            <div class="space-y-3">
-                <h4 class="text-sm font-bold text-white">وسائل الدفع المعتمدة</h4>
-                <div class="flex justify-center md:justify-start space-x-3 space-x-reverse opacity-70">
-                    <span class="bg-white text-red-600 px-2 py-1 text-[10px] font-bold">Orange Cash</span>
-                </div>
-            </div>
-        </div>
-        <div class="border-t border-gray-900 py-4 text-center text-xs text-stone-500">
-            &copy; 2026 براند Trend. جميع الحقوق محفوظة لشركة <span class="text-gold font-bold">Aivare</span>.
-        </div>
-    </footer>
-
     <script>
-        const API_URL = 'http://127.0.0.1:8000/api';
+        const API_URL = 'https://trend-production-eb5c.up.railway.app';
         let cart = [];
         let tempUserData = {};
-        let activeCategory = 'men';
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedUser = JSON.parse(localStorage.getItem('currentUser'));
-            if(savedUser) {
-                document.getElementById('user-display-name').innerText = savedUser.name;
-            }
-        });
 
         function navigateTo(viewId) {
             const homeView = document.getElementById('home-view');
@@ -218,7 +186,6 @@
             } else {
                 homeView.classList.add('hidden-force');
                 categoryView.classList.remove('hidden-force');
-                activeCategory = viewId;
                 buildCategoryPage(viewId);
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -241,15 +208,14 @@
             grid.innerHTML = '<div class="col-span-4 text-center py-12 text-gray-400 text-xs">جاري جلب المنتجات...</div>';
 
             try {
-                // تعديل رابط الـ Fetch ليكون متوافقاً تماماً مع السيرفر الحقيقي ومسارات الـ API اللي في الـ main.py
-                const response = await fetch(`${API_URL}/products`);
-                if (!response.ok) throw new Error("استجابة غير سليمة من السيرفر");
+                const response = await fetch(`${API_URL}/api/products`);
+                if (!response.ok) throw new Error("خطأ في الاتصال");
                 const products = await response.json();
                 grid.innerHTML = '';
 
                 const filtered = products.filter(p => p.category === category);
                 if (filtered.length === 0) {
-                    grid.innerHTML = '<div class="col-span-4 text-center py-12 text-gray-400 text-xs">لا توجد قطع معروضة في هذا القسم حالياً.</div>';
+                    grid.innerHTML = '<div class="col-span-4 text-center py-12 text-gray-400 text-xs">لا توجد منتجات في هذا القسم.</div>';
                     return;
                 }
 
@@ -260,14 +226,13 @@
                             <h3 class="text-xs text-gray-800 font-semibold text-right">${p.name}</h3>
                             <div class="flex justify-between items-center mt-3">
                                 <span class="text-xs font-bold text-gray-900">${p.price} ج.م</span>
-                                <button onclick="addToCart('${p.name}', ${p.price})" class="bg-black text-white text-[10px] px-3 py-1.5 rounded hover:bg-gray-800 focus:outline-none">+ إضافة للسلة</button>
+                                <button onclick="addToCart('${p.name}', ${p.price})" class="bg-black text-white text-[10px] px-3 py-1.5 rounded hover:bg-gray-800">+ إضافة</button>
                             </div>
                         </div>
                     `;
                 });
             } catch (error) {
-                console.error("خطأ في جلب البيانات:", error);
-                grid.innerHTML = '<div class="col-span-4 text-center py-12 text-red-500 text-xs">فشل الاتصال بالخادم. يرجى التأكد من تشغيل الباك-إند وحفظ التعديلات في ملف main.py.</div>';
+                grid.innerHTML = '<div class="col-span-4 text-center py-12 text-red-500 text-xs">فشل الاتصال بالخادم.</div>';
             }
         }
 
@@ -277,134 +242,58 @@
         function addToCart(name, price) {
             cart.push({ name, price });
             updateCartUI();
-            document.getElementById('cart-sidebar').classList.remove('hidden-force');
+            toggleCart();
         }
 
         function updateCartUI() {
             const countElem = document.getElementById('cart-count');
             const listElem = document.getElementById('cart-items-list');
             const totalElem = document.getElementById('cart-total-price');
-            const emptyMsg = document.getElementById('empty-cart-msg');
-
             countElem.innerText = cart.length;
-            if (cart.length === 0) {
-                emptyMsg.classList.remove('hidden-force');
-                listElem.innerHTML = '';
-                totalElem.innerText = '0 ج.م';
-                return;
-            }
-
-            emptyMsg.classList.add('hidden-force');
             listElem.innerHTML = '';
             let total = 0;
-
             cart.forEach((item, index) => {
                 total += item.price;
-                listElem.innerHTML += `
-                    <li class="flex py-4 text-right">
-                        <div class="flex-1 flex flex-col justify-between pr-4">
-                            <div class="flex justify-between text-sm font-medium text-gray-900">
-                                <h3>${item.name}</h3>
-                                <p class="ml-4 font-bold">${item.price} ج.م</p>
-                            </div>
-                            <div class="flex items-end justify-between text-xs mt-2">
-                                <p class="text-gray-500">الكمية: 1</p>
-                                <button onclick="removeFromCart(${index})" class="font-medium text-red-600 focus:outline-none">حذف</button>
-                            </div>
-                        </div>
-                    </li>
-                `;
+                listElem.innerHTML += `<li class="flex py-4"><p class="text-sm">${item.name}</p><p class="ml-auto font-bold">${item.price} ج.م</p></li>`;
             });
             totalElem.innerText = total + ' ج.م';
         }
 
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCartUI();
-        }
-
         async function checkoutOrder() {
-            if (cart.length === 0) { alert('السلة فارغة!'); return; }
             const totalPrice = cart.reduce((acc, curr) => acc + curr.price, 0);
-            const savedUser = JSON.parse(localStorage.getItem('currentUser'));
-            const userPhone = savedUser ? savedUser.phone : "غير مسجل";
-
-            const orderData = {
-                items: cart.map(item => item.name),
-                total_price: totalPrice,
-                phone: userPhone
-            };
-
             try {
-                // توجيه الطلبات ليكون متوافقاً مع المسار الفعلي في الـ FastAPI
-                const response = await fetch(`${API_URL}/orders`, {
+                const response = await fetch(`${API_URL}/api/orders`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(orderData)
+                    body: JSON.stringify({ items: cart.map(i => i.name), total_price: totalPrice, phone: "012xxxxxxx" })
                 });
-                const resData = await response.json();
-
-                if (response.ok) {
-                    alert(`🎉 تم حجز طلبك بنجاح برقم ${resData.order.order_id}\nيرجى تحويل ${totalPrice} ج.م إلى أورنج كاش: 01274734227`);
-                    cart = [];
-                    updateCartUI();
-                    toggleCart();
-                } else {
-                    alert(resData.detail || 'حدث خطأ أثناء معالجة الطلب');
-                }
-            } catch (error) {
-                alert("تعذر الاتصال بالخادم.");
-            }
+                if(response.ok) { alert('تم حجز الطلب!'); cart = []; updateCartUI(); }
+            } catch(e) { alert("فشل الاتصال"); }
         }
 
         async function handleRegistration(event) {
             event.preventDefault();
-            tempUserData = {
-                name: document.getElementById('reg-name').value,
-                phone: document.getElementById('reg-phone').value,
-                password: document.getElementById('reg-password').value
-            };
-
+            tempUserData = { name: document.getElementById('reg-name').value, phone: document.getElementById('reg-phone').value, password: document.getElementById('reg-password').value };
             try {
-                const response = await fetch(`${API_URL}/register`, {
+                const response = await fetch(`${API_URL}/api/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(tempUserData)
                 });
-                const resData = await response.json();
-
-                if (response.ok) {
-                    document.getElementById('otp-area').classList.remove('hidden-force');
-                    document.getElementById('otp-status-msg').innerText = "تم إرسال كود التحقق!";
-                    alert(`[OTP للتجربة]: ${resData.dev_mode_otp}`);
-                } else {
-                    alert(resData.detail || "خطأ أثناء التسجيل");
-                }
-            } catch (error) {
-                alert("فشل الاتصال بالخادم.");
-            }
+                if(response.ok) document.getElementById('otp-area').classList.remove('hidden-force');
+            } catch(e) { alert("فشل الاتصال"); }
         }
 
         async function verifyOtp() {
             const code = document.getElementById('otp-code').value;
             try {
-                const response = await fetch(`${API_URL}/verify-otp`, {
+                const response = await fetch(`${API_URL}/api/verify-otp`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ phone: tempUserData.phone, otp_code: code })
                 });
-
-                if (response.ok) {
-                    alert(`أهلاً بك! تم التسجيل بنجاح.`);
-                    localStorage.setItem('currentUser', JSON.stringify(tempUserData));
-                    document.getElementById('user-display-name').innerText = tempUserData.name;
-                    toggleAuthModal();
-                } else {
-                    alert('الكود خاطئ.');
-                }
-            } catch (error) {
-                alert("فشل التحقق.");
-            }
+                if(response.ok) { alert('تم التسجيل!'); toggleAuthModal(); }
+            } catch(e) { alert("فشل"); }
         }
     </script>
 </body>
