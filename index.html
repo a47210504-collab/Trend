@@ -100,7 +100,6 @@
         </section>
     </div>
 
-    <!-- لتوسيط المنتجات عند قلة عددها، أضفنا mx-auto للتنسيق التلقائي -->
     <div id="category-view" class="hidden-force container mx-auto px-4 py-12 min-h-screen">
         <button onclick="navigateTo('home')" class="text-xs font-bold text-gray-500 hover:text-black mb-6 flex items-center">
             ← العودة للصفحة الرئيسية
@@ -109,10 +108,7 @@
             <h2 id="category-title" class="text-3xl font-bold text-gray-900">اسم القسم</h2>
             <p id="category-desc" class="text-gray-500 text-sm mt-2"></p>
         </div>
-        <!-- التعديل هنا: أضفنا flex justify-center لضمان توسيط المنتجات تلقائياً إذا كانت قليلة -->
-        <div id="category-products-container" class="flex justify-center w-full">
-            <div id="category-products-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-6xl"></div>
-        </div>
+        <div id="category-products-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
     </div>
 
     <div id="cart-sidebar" class="hidden-force">
@@ -177,6 +173,7 @@
     </div>
 
     <script>
+        // الرابط هنا يشير مباشرة إلى سيرفر ريلواي الصحيح والنشط
         const API_URL = 'https://trend-production-eb5c.up.railway.app';
         let cart = [];
         let tempUserData = {};
@@ -209,7 +206,6 @@
             document.getElementById('category-desc').innerText = titles[category]?.desc || '';
 
             const grid = document.getElementById('category-products-grid');
-            const container = document.getElementById('category-products-container');
             grid.innerHTML = '<div class="col-span-4 text-center py-12 text-gray-400 text-xs">جاري جلب المنتجات...</div>';
 
             try {
@@ -224,21 +220,10 @@
                     return;
                 }
 
-                // ذكاء التوسيط: لو عدد العناصر قليل، بنتحكم في الـ Grid تلقائياً عشان تطلع في النص ومتترحلش يمين
-                if (filtered.length === 1) {
-                    grid.className = "grid grid-cols-1 max-w-sm gap-6 w-full justify-center";
-                } else if (filtered.length === 2) {
-                    grid.className = "grid grid-cols-2 max-w-2xl gap-6 w-full justify-center";
-                } else if (filtered.length === 3) {
-                    grid.className = "grid grid-cols-2 md:grid-cols-3 max-w-4xl gap-6 w-full justify-center";
-                } else {
-                    grid.className = "grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-6xl";
-                }
-
                 filtered.forEach(p => {
                     grid.innerHTML += `
-                        <div class="bg-white border border-gray-100 rounded-lg p-3 shadow-sm flex flex-col justify-between transition-all hover:shadow-md">
-                            <img src="${p.img}" class="w-full h-48 md:h-64 object-cover rounded mb-3">
+                        <div class="bg-white border border-gray-100 rounded-lg p-3 shadow-sm flex flex-col justify-between">
+                            <img src="${p.img}" class="w-full h-48 object-cover rounded mb-3">
                             <h3 class="text-xs text-gray-800 font-semibold text-right">${p.name}</h3>
                             <div class="flex justify-between items-center mt-3">
                                 <span class="text-xs font-bold text-gray-900">${p.price} ج.م</span>
